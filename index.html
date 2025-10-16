@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>The Suit – Whiteboard</title>
@@ -31,15 +32,30 @@
       align-items: center;
       gap: 10px;
     }
-    .icon {
-      width: 28px;
-      height: 28px;
+    .icon { width: 28px; height: 28px; }
+    p, li { font-size: 16px; line-height: 1.6; color: #333; }
+    ul { padding-left: 20px; }
+
+    .hint {
+      font-size: 13px;
+      color: #555;
+      margin-top: 8px;
+      font-style: italic;
     }
-    p, li {
-      font-size: 16px;
-      line-height: 1.6;
-      color: #333;
+
+    /* Multi-color highlights for easy differentiation */
+    .highlight-yellow { background-color: #fff89a; }
+    .highlight-blue { background-color: #a7e0ff; }
+    .highlight-green { background-color: #b4f8c8; }
+    .highlight-pink { background-color: #ffc6ff; }
+    .highlight-orange { background-color: #ffd6a5; }
+
+    .highlight-yellow, .highlight-blue, .highlight-green, .highlight-pink, .highlight-orange {
+      cursor: pointer;
+      border-radius: 4px;
+      padding: 2px 4px;
     }
+
     .button {
       display: inline-block;
       padding: 10px 20px;
@@ -49,10 +65,10 @@
       border-radius: 5px;
       font-weight: bold;
       margin-top: 15px;
+      transition: transform 0.2s ease, background-color 0.2s ease;
     }
-    ul {
-      padding-left: 20px;
-    }
+    .button:hover { transform: scale(1.05); background-color: #0090d1; }
+
     .dialogue-box {
       position: fixed;
       top: 50px;
@@ -65,105 +81,151 @@
       border-radius: 12px;
       max-width: 600px;
       z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
       display: none;
     }
+    .dialogue-box.show { display: block; opacity: 1; }
     .close-btn {
-      float: right;
-      cursor: pointer;
-      font-size: 18px;
-      color: #444;
-      background: #eee;
-      padding: 4px 10px;
-      border-radius: 6px;
-      margin-top: -10px;
+      float: right; cursor: pointer; font-size: 18px; color: #444; background: #eee;
+      padding: 4px 10px; border-radius: 6px; margin-top: -10px;
     }
-    .highlight {
-      background-color: #fff89a;
-      cursor: pointer;
-      border-radius: 4px;
-      padding: 2px 4px;
+
+    @media (max-width: 768px) {
+      .whiteboard { width: 90%; padding: 20px; border-width: 15px; }
+      p, li { font-size: 14px; }
     }
   </style>
   <script>
+    const chalkSound = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_6d6318b1b1.mp3?filename=chalk-on-blackboard-6873.mp3");
     function toggleBox(id) {
-      var box = document.getElementById(id);
-      box.style.display = box.style.display === 'block' ? 'none' : 'block';
+      const box = document.getElementById(id);
+      if (box.classList.contains("show")) {
+        box.classList.remove("show");
+        setTimeout(() => (box.style.display = "none"), 500);
+      } else {
+        box.style.display = "block";
+        setTimeout(() => box.classList.add("show"), 10);
+        chalkSound.currentTime = 0;
+        chalkSound.play().catch(() => {});
+        box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
   </script>
 </head>
 <body>
   <div class="whiteboard">
+
     <div class="section">
       <h2><img class="icon" src="https://img.icons8.com/emoji/48/calendar-emoji.png"/> Date</h2>
       <p>15 October 2025</p>
     </div>
+
     <div class="section">
       <h2><img class="icon" src="https://img.icons8.com/emoji/48/open-book-emoji.png"/> Topic</h2>
       <p>Excerpt “The Suit” by Can Themba</p>
     </div>
+
     <div class="section">
       <h2><img class="icon" src="https://img.icons8.com/color/48/goals--v1.png"/> Lesson Objectives</h2>
       <ul>
-        <li>Identify key narrative elements (character, plot, setting, conflict).</li>
-        <li>Analyse how elements contribute to meaning.</li>
-        <li>Develop written responses using evidence from the text.</li>
+        <li>Identify key story parts (like who, where, and what’s happening).</li>
+        <li>Understand how details help tell the story’s meaning.</li>
+        <li>Write answers using examples from the story.</li>
       </ul>
     </div>
+
     <div class="section">
       <h2>⏱️ PDN (Please Do Now)</h2>
-      <p>Sentence: <span class="highlight" onclick="toggleBox('pdn1')">"He stood in the doorway."</span></p>
-      <p>Task: Add <span class="highlight" onclick="toggleBox('pdn2')">descriptive elements</span> to expand the setting and character.</p>
+      <p>Sentence: <span class="highlight-yellow" onclick="toggleBox('pdnExample')">"He stood in the doorway."</span></p>
+      <p class="hint">💡 Tip: Tap the <span class="highlight-yellow">colored parts</span> to see what they mean or why they’re important!</p>
       <p><a href="javascript:void(0);" class="button" onclick="toggleBox('pdnExample')">📘 View Example</a></p>
     </div>
-    <div id="pdn1" class="dialogue-box"><span class="close-btn" onclick="toggleBox('pdn1')">✖</span><p>This is a basic sentence lacking detail. Good for applying description techniques.</p></div>
-    <div id="pdn2" class="dialogue-box"><span class="close-btn" onclick="toggleBox('pdn2')">✖</span><p>Descriptive elements can include sensory details, setting clues, or character actions.</p></div>
+
     <div id="pdnExample" class="dialogue-box">
       <span class="close-btn" onclick="toggleBox('pdnExample')">✖</span>
-      <p><strong>Example:</strong> He stood in the doorway, <span class='highlight' onclick='toggleBox("pdn3")'>rain sliding off his coat</span>, eyes scanning the dark room like a hunter.<br><br></p>
+      <p><strong>Expanded Example:</strong>
+        <span class="highlight-blue" onclick="toggleBox('pdnNote1')">He stood in the doorway, shoulders tense beneath his worn jacket, the pale light from the corridor framing his silhouette like a ghost returning home.</span>
+        <span class="highlight-green" onclick="toggleBox('pdnNote2')">The air smelled faintly of damp and dust, whispering secrets from a time he’d tried to forget.</span>
+      </p>
     </div>
-    <div id="pdn3" class="dialogue-box"><span class="close-btn" onclick="toggleBox('pdn3')">✖</span><p>Imagery gives a sense of mood and setting. This detail creates suspense and context.</p></div><div class="section">
-  <h2>❓ Do It</h2>
-  <ol>
-    <li>Who is the main character and what motivates them?</li>
-    <li>What clues are given about the setting?</li>
-    <li>What is the central conflict in this excerpt?</li>
-  </ol>
-  <p><a href="javascript:void(0);" class="button" onclick="toggleBox('doitAnswers')">📘 View Answers</a></p>
-</div>
-<div id="doitAnswers" class="dialogue-box">
-  <span class="close-btn" onclick="toggleBox('doitAnswers')">✖</span>
-  <ul>
-    <li><strong>Main Character:</strong> A husband who discovers betrayal in his marriage. Not named in the excerpt.</li>
-    <li><strong>Setting:</strong> Urban environment – references to lighting, housing, and enclosed spaces.</li>
-    <li><strong>Conflict:</strong> Betrayal within a relationship and emotional tension.</li>
-  </ul>
-</div>
 
-<div class="section">
-  <h2>📖 Do It Again</h2>
-  <p>Rewrite this passage by inserting descriptive techniques: <br>
-    <span class="highlight" onclick="toggleBox('again1')">"He picked up the suit from the chair."</span></p>
-  <p><a href="javascript:void(0);" class="button" onclick="toggleBox('againAnswers')">📘 View Answers</a></p>
-</div>
-<div id="again1" class="dialogue-box"><span class="close-btn" onclick="toggleBox('again1')">✖</span><p>This action sentence can be enriched with mood, movement, and internal reaction.</p></div>
-<div id="againAnswers" class="dialogue-box">
-  <span class="close-btn" onclick="toggleBox('againAnswers')">✖</span>
-  <p><strong>Sample Rewrite:</strong> He picked up the suit from the chair, <span class='highlight' onclick='toggleBox("again2")'>fingers trembling as if the fabric could sting</span>, heart thudding with remembered pain.</p>
-</div>
-<div id="again2" class="dialogue-box"><span class="close-btn" onclick="toggleBox('again2')">✖</span><p>This highlights the emotional weight behind a simple action, adding depth.</p></div>
+    <div id="pdnNote1" class="dialogue-box"><span class="close-btn" onclick="toggleBox('pdnNote1')">✖</span><p>🎨 This sentence helps you picture the man clearly. It shows he’s tense (worried or scared) and uses light to make him look mysterious — like something important is about to happen.</p></div>
+    <div id="pdnNote2" class="dialogue-box"><span class="close-btn" onclick="toggleBox('pdnNote2')">✖</span><p>👃 This sentence uses smell to help you imagine the place. “Damp and dust” makes the room feel old and full of memories.</p></div>
 
-<div class="section">
-  <h2>📝 Independent Practice</h2>
-  <p>Describe a scene from the husband’s perspective using vivid detail.<br>
-    <span class="highlight" onclick="toggleBox('indie1')">"The room was silent, except for the ticking clock."</span></p>
-  <p><a href="javascript:void(0);" class="button" onclick="toggleBox('indieAnswers')">📘 View Answers</a></p>
-</div>
-<div id="indie1" class="dialogue-box"><span class="close-btn" onclick="toggleBox('indie1')">✖</span><p>This line sets tone. Use auditory imagery and symbolism to enhance it.</p></div>
-<div id="indieAnswers" class="dialogue-box">
-  <span class="close-btn" onclick="toggleBox('indieAnswers')">✖</span>
-  <p><strong>Sample:</strong> The room was silent, except for the ticking clock, <span class='highlight' onclick='toggleBox("indie2")'>its rhythmic pulse echoing his dread</span>, marking each moment of his disbelief.</p>
-</div>
-<div id="indie2" class="dialogue-box"><span class="close-btn" onclick="toggleBox('indie2')">✖</span><p>This uses personification and auditory imagery to connect time with emotion.</p></div>
+    <div class="section">
+      <h2>❓ Do It</h2>
+      <ol>
+        <li>Who is the main character and what does he want?</li>
+        <li>Where and when does the story happen?</li>
+        <li>What problem or fight happens in the story?</li>
+      </ol>
+      <p class="hint">💡 Click the colored sentences in the answers to learn what makes them special!</p>
+      <p><a href="javascript:void(0);" class="button" onclick="toggleBox('doitAnswers')">📘 View Answers</a></p>
+    </div>
+
+    <div id="doitAnswers" class="dialogue-box">
+      <span class="close-btn" onclick="toggleBox('doitAnswers')">✖</span>
+      <ul>
+        <li><strong>Main Character:</strong>
+          <span class="highlight-blue" onclick="toggleBox('noteJabu')">Jabu wants to find out the truth about a suit and what it means to his wife, Mei, and his brother.</span>
+        </li>
+        <li><strong>Setting:</strong>
+          <span class="highlight-pink" onclick="toggleBox('noteSetting')">The story happens in a small flat (apartment) in South Africa, long ago. It feels closed in — like Jabu is trapped by his feelings.</span>
+        </li>
+        <li><strong>Conflict:</strong>
+          <span class="highlight-orange" onclick="toggleBox('noteConflict')">Jabu feels hurt and confused because he thinks Mei is keeping secrets about his brother. The suit reminds him of sadness and truth.</span>
+        </li>
+      </ul>
+    </div>
+
+    <div id="noteJabu" class="dialogue-box"><span class="close-btn" onclick="toggleBox('noteJabu')">✖</span><p>🧠 This explains what drives Jabu — he wants answers and feels mixed emotions like anger and love.</p></div>
+    <div id="noteSetting" class="dialogue-box"><span class="close-btn" onclick="toggleBox('noteSetting')">✖</span><p>🏠 The place shows how small and heavy their world feels, matching their sad feelings.</p></div>
+    <div id="noteConflict" class="dialogue-box"><span class="close-btn" onclick="toggleBox('noteConflict')">✖</span><p>💔 The suit is like a memory that hurts — it keeps reminding Jabu of the bad things he can’t forget.</p></div>
+
+    <div class="section">
+      <h2>📖 Do It Again</h2>
+      <p>Write your own paragraph showing a problem between two people.</p>
+      <p class="hint">💡 Click on the colors in the example to see how emotions are shown through words.</p>
+      <p><a href="javascript:void(0);" class="button" onclick="toggleBox('againAnswers')">📘 View Example</a></p>
+    </div>
+
+    <div id="againAnswers" class="dialogue-box">
+      <span class="close-btn" onclick="toggleBox('againAnswers')">✖</span>
+      <p><strong>Example Response:</strong><br>
+        <span class="highlight-yellow" onclick="toggleBox('againNote1')">Jabu held the suit tightly, his hands shaking with anger and sadness.</span>
+        <span class="highlight-blue" onclick="toggleBox('againNote2')">Mei looked away, saying nothing — her silence spoke louder than words.</span>
+        <span class="highlight-green" onclick="toggleBox('againNote3')">The air between them felt heavy, full of things they both wanted to say but couldn’t.</span>
+      </p>
+    </div>
+
+    <div id="againNote1" class="dialogue-box"><span class="close-btn" onclick="toggleBox('againNote1')">✖</span><p>😠 This shows Jabu’s feelings through his body, not by saying “he was angry.”</p></div>
+    <div id="againNote2" class="dialogue-box"><span class="close-btn" onclick="toggleBox('againNote2')">✖</span><p>🤫 Silence can be powerful — sometimes not speaking shows guilt or sadness.</p></div>
+    <div id="againNote3" class="dialogue-box"><span class="close-btn" onclick="toggleBox('againNote3')">✖</span><p>💬 The space around them feels like their emotions — full and tense, just like their hearts.</p></div>
+
+    <div class="section">
+      <h2>📝 Independent Practice</h2>
+      <p>Write a short paragraph that shows how someone feels without saying it directly.</p>
+      <p class="hint">💡 Tap the colors in the example to learn how writers use details to show emotion.</p>
+      <p><a href="javascript:void(0);" class="button" onclick="toggleBox('indieAnswers')">📘 View Example</a></p>
+    </div>
+
+    <div id="indieAnswers" class="dialogue-box">
+      <span class="close-btn" onclick="toggleBox('indieAnswers')">✖</span>
+      <p><strong>Example Paragraph:</strong><br>
+        <span class="highlight-blue" onclick="toggleBox('indieNote1')">The room felt smaller than ever as Jabu’s questions filled the air.</span>
+        <span class="highlight-green" onclick="toggleBox('indieNote2')">Mei stood by the window, her reflection mixing with the city lights.</span>
+        <span class="highlight-pink" onclick="toggleBox('indieNote3')">The suit hung in the corner — black, shiny, and still.</span>
+        <span class="highlight-orange" onclick="toggleBox('indieNote4')">Jabu saw not just a coat but a memory that made him sad all over again.</span>
+        <span class="highlight-yellow" onclick="toggleBox('indieNote5')">The kettle started to whistle — the only sound brave enough to break the silence.</span>
+      </p>
+    </div>
+
+    <div id="indieNote1" class="dialogue-box"><span class="close-btn" onclick="toggleBox('indieNote1')">✖</span><p>🏠 This shows that feelings can make a room feel small and tight — like being trapped.</p></div>
+    <div id="indieNote2" class="dialogue-box"><span class="close-btn" onclick="toggleBox('indieNote2')">✖</span><p>🌃 The lights show she feels far away, lost in her own world.</p></div>
+    <div id="indieNote3" class="dialogue-box"><span class="close-btn" onclick="toggleBox('indieNote3')">✖</span><p>🧥 The suit isn’t just clothes — it’s a reminder of something sad.</p></div>
+    <div id="indieNote4" class="dialogue-box"><span class="close-btn" onclick="toggleBox('indieNote4')">✖</span><p>💭 Sometimes memories hurt more than what’s happening right now.</p></div>
+    <div id="indieNote5" class="dialogue-box"><span class="close-btn" onclick="toggleBox('indieNote5')">✖</span><p>☕ Even simple sounds, like the kettle, can make a moment feel real and calm.</p></div>
 
   </div>
 </body>
